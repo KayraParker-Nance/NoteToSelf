@@ -8,4 +8,11 @@
     <color name="nts_text_secondary">#B0B0B0</color>
     <color name="nts_accent">#7986CB</color>
     <color name="nts_due_soon">#EF5350</color>
+
+    <color name="task_pink">#6B4A57</color>
+    <color name="task_peach">#6B5642</color>
+    <color name="task_yellow">#6B6442</color>
+    <color name="task_mint">#3F6B54</color>
+    <color name="task_sky">#3F5A6B</color>
+    <color name="task_lavender">#54486B</color>
 </resources>

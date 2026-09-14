@@ -2,6 +2,7 @@ package kpn.projects.notetoself.ui;
 
 import android.app.Application;
 
+import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
@@ -14,11 +15,15 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import kpn.projects.notetoself.R;
 import kpn.projects.notetoself.adapters.CalendarDayAdapter;
 import kpn.projects.notetoself.adapters.CalendarTaskAdapter;
+import kpn.projects.notetoself.enums.TaskColour;
 import kpn.projects.notetoself.tasks.Task;
 import kpn.projects.notetoself.tasks.TaskOccurrenceDao;
 import kpn.projects.notetoself.tasks.TaskRepository;
@@ -90,7 +95,7 @@ public class CalendarViewModel extends AndroidViewModel {
         YearMonth month = currentMonth.getValue();
         if (month == null) return;
 
-        Map<LocalDate, boolean[]> markers = buildMarkers();
+        Map<LocalDate, DayMarker> markers = buildMarkers();
 
         List<CalendarDayAdapter.DayCell> cells = new ArrayList<>();
         LocalDate firstOfMonth = month.atDay(1);
@@ -100,37 +105,15 @@ public class CalendarViewModel extends AndroidViewModel {
         for (int i = 0; i < 42; i++) {
             boolean inMonth = YearMonth.from(cursor).equals(month);
             CalendarDayAdapter.DayCell cell = new CalendarDayAdapter.DayCell(cursor, inMonth);
-            boolean[] flags = markers.get(cursor);
-            if (flags != null) {
-                cell.hasDueDate = flags[0];
-                cell.hasRegular = flags[1];
+            DayMarker marker = markers.get(cursor);
+            if (marker != null) {
+                cell.dotColorResList = new ArrayList<>(marker.colorResSet);
             }
             cells.add(cell);
             cursor = cursor.plusDays(1);
         }
 
         dayCells.setValue(cells);
-    }
-
-    private Map<LocalDate, boolean[]> buildMarkers() {
-        Map<LocalDate, boolean[]> markers = new HashMap<>();
-
-        List<Task> dueDateTasks = dueDateTasksInMonth.getValue();
-        if (dueDateTasks != null) {
-            for (Task t : dueDateTasks) {
-                if (t.dueDate == null) continue;
-                markers.computeIfAbsent(t.dueDate.toLocalDate(), k -> new boolean[2])[0] = true;
-            }
-        }
-
-        List<TaskOccurrenceDao.TaskOccurrenceWithTitle> occurrences = occurrencesInMonth.getValue();
-        if (occurrences != null) {
-            for (TaskOccurrenceDao.TaskOccurrenceWithTitle o : occurrences) {
-                markers.computeIfAbsent(o.scheduledDate, k -> new boolean[2])[1] = true;
-            }
-        }
-
-        return markers;
     }
 
     private void recomputeSelectedDayTasks() {
@@ -158,5 +141,36 @@ public class CalendarViewModel extends AndroidViewModel {
         }
 
         tasksForSelectedDate.setValue(items);
+    }
+
+    private static class DayMarker {
+        final Set<Integer> colorResSet = new LinkedHashSet<>();
+
+    }
+
+    private Map<LocalDate, DayMarker> buildMarkers() {
+        Map<LocalDate, DayMarker> markers = new HashMap<>();
+
+        List<Task> dueDateTasks = dueDateTasksInMonth.getValue();
+        if (dueDateTasks != null) {
+            for (Task t : dueDateTasks) {
+                if (t.dueDate == null) continue;
+                int colorRes = resolveColorRes(t.color, R.color.nts_due_soon);
+                markers.computeIfAbsent(t.dueDate.toLocalDate(), k -> new DayMarker()).colorResSet.add(colorRes);
+            }
+        }
+
+        List<TaskOccurrenceDao.TaskOccurrenceWithTitle> occurrences = occurrencesInMonth.getValue();
+        if (occurrences != null) {
+            for (TaskOccurrenceDao.TaskOccurrenceWithTitle o : occurrences) {
+                int colorRes = resolveColorRes(o.color, R.color.nts_accent);
+                markers.computeIfAbsent(o.scheduledDate, k -> new DayMarker()).colorResSet.add(colorRes);
+            }
+        }
+
+        return markers;
+    }
+    private int resolveColorRes(TaskColour color, @ColorRes int fallbackColorRes) {
+        return (color != null && color != TaskColour.NONE) ? color.getColorRes() : fallbackColorRes;
     }
 }

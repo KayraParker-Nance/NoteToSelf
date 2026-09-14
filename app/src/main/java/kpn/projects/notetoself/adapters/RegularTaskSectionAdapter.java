@@ -10,6 +10,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.card.MaterialCardView;
+
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -93,12 +95,14 @@ public class RegularTaskSectionAdapter extends RecyclerView.Adapter<RecyclerView
     }
 
     class OccurrenceViewHolder extends RecyclerView.ViewHolder {
+        private final MaterialCardView card;
         private final CheckBox checkbox;
         private final TextView title;
         private final TextView subtitle;
 
         OccurrenceViewHolder(@NonNull View itemView) {
             super(itemView);
+            card = (MaterialCardView) itemView;
             checkbox = itemView.findViewById(R.id.checkbox_task_complete);
             title = itemView.findViewById(R.id.text_task_title);
             subtitle = itemView.findViewById(R.id.text_task_subtitle);
@@ -110,6 +114,8 @@ public class RegularTaskSectionAdapter extends RecyclerView.Adapter<RecyclerView
             subtitle.setVisibility(View.VISIBLE);
             subtitle.setText(itemView.getContext().getString(
                     R.string.due_date_format, occurrence.scheduledDate.format(DATE_FORMAT)));
+
+            TaskColourUI.apply(card, occurrence.color);
 
             checkbox.setOnCheckedChangeListener(null);
             checkbox.setChecked(false); // row only exists while PENDING — always shown unchecked
@@ -168,7 +174,8 @@ public class RegularTaskSectionAdapter extends RecyclerView.Adapter<RecyclerView
             TaskOccurrenceDao.TaskOccurrenceWithTitle nt = ((OccurrenceRow) n).occurrence;
 
             return Objects.equals(ot.title, nt.title)
-                    && Objects.equals(ot.scheduledDate, nt.scheduledDate);
+                    && Objects.equals(ot.scheduledDate, nt.scheduledDate)
+                    && ot.color == nt.color;
         }
     }
 }

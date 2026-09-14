@@ -9,12 +9,14 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
@@ -24,8 +26,11 @@ import com.google.android.material.switchmaterial.SwitchMaterial;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 import kpn.projects.notetoself.R;
+import kpn.projects.notetoself.enums.TaskColour;
 import kpn.projects.notetoself.notifications.NotificationRefreshReceiver;
 import kpn.projects.notetoself.tasks.NotificationConfig;
 import kpn.projects.notetoself.enums.RecurrenceUnit;
@@ -41,9 +46,7 @@ public class AddEditTaskFragment extends Fragment {
     private TaskViewModel viewModel;
     private long taskId = NO_TASK_ID;
     private boolean isEditMode;
-    private boolean fieldsPopulated = false; // guards against LiveData re-firing over user edits
-
-    // existing objects being edited — null in add mode until first save
+    private boolean fieldsPopulated = false;
     private Task existingTask;
 
     private EditText inputTitle;
@@ -69,6 +72,10 @@ public class AddEditTaskFragment extends Fragment {
     private LocalDate selectedStartDate = LocalDate.now();
     private LocalDate selectedShowAfterDate;
 
+    private LinearLayout layoutColorSwatches;
+    private TaskColour selectedColor = TaskColour.NONE;
+    private final List<View> colorSwatchViews = new ArrayList<>();
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -89,6 +96,7 @@ public class AddEditTaskFragment extends Fragment {
         setupTypeGroup();
         setupSpinner();
         setupDatePickers();
+        setupColorPicker();
         setupSaveAndDelete();
 
         if (isEditMode) {
@@ -118,6 +126,7 @@ public class AddEditTaskFragment extends Fragment {
         inputRepeatHours = view.findViewById(R.id.input_repeat_hours);
         buttonSave = view.findViewById(R.id.button_save);
         buttonDelete = view.findViewById(R.id.button_delete);
+        layoutColorSwatches = view.findViewById(R.id.layout_color_swatches);
     }
 
     private void setupTypeGroup() {
@@ -172,14 +181,14 @@ public class AddEditTaskFragment extends Fragment {
 
     private void observeExistingTask() {
         viewModel.getTask(taskId).observe(getViewLifecycleOwner(), task -> {
-            if (task == null || fieldsPopulated) return; // don't clobber in-progress edits
+            if (task == null || fieldsPopulated) return;
             fieldsPopulated = true;
             existingTask = task;
             populateFields(task);
         });
 
         viewModel.getNotificationConfig(taskId).observe(getViewLifecycleOwner(), config -> {
-            if (config == null) return; // task has no reminder config yet — leave switch/fields at defaults
+            if (config == null) return;
             switchSticky.setChecked(config.stickyEnabled);
             if (config.showAfterDate != null) {
                 selectedShowAfterDate = config.showAfterDate.toLocalDate();
@@ -194,6 +203,8 @@ public class AddEditTaskFragment extends Fragment {
     private void populateFields(Task task) {
         inputTitle.setText(task.title);
         inputDescription.setText(task.description);
+        selectedColor = task.color != null ? task.color : TaskColour.NONE;
+        updateSwatchSelectionUi();
 
         switch (task.type) {
             case DUE_DATE:
@@ -244,6 +255,7 @@ public class AddEditTaskFragment extends Fragment {
         task.title = title;
         task.description = inputDescription.getText().toString().trim();
         task.createdAt = isEditMode ? task.createdAt : LocalDateTime.now();
+        task.color = selectedColor;
 
         int checkedTypeId = radioGroupType.getCheckedRadioButtonId();
         if (checkedTypeId == R.id.radio_due_date) {
@@ -262,7 +274,7 @@ public class AddEditTaskFragment extends Fragment {
 
         NotificationConfig config = new NotificationConfig();
         config.stickyEnabled = switchSticky.isChecked();
-        config.enabled = switchSticky.isChecked(); // sticky implies the reminder system is active for this task
+        config.enabled = switchSticky.isChecked();
         config.showAfterDate = selectedShowAfterDate != null ? selectedShowAfterDate.atStartOfDay() : null;
         config.repeatIntervalHours = parseRepeatHoursOrDefault();
 
@@ -319,6 +331,48 @@ public class AddEditTaskFragment extends Fragment {
             }
         } else {
             radioGroupType.check(R.id.radio_todo);
+        }
+    }
+
+    private void setupColorPicker() {
+        layoutColorSwatches.removeAllViews();
+        colorSwatchViews.clear();
+
+        float density = getResources().getDisplayMetrics().density;
+        int size = (int) (36 * density);
+        int margin = (int) (8 * density);
+
+        for (TaskColour color : TaskColour.values()) {
+            View swatch = new View(requireContext());
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(size, size);
+            params.setMarginEnd(margin);
+            swatch.setLayoutParams(params);
+
+            if (color == TaskColour.NONE) {
+                swatch.setBackgroundResource(R.drawable.bg_colour_swatch_none);
+            } else {
+                swatch.setBackgroundResource(R.drawable.bg_colour_swatch);
+                swatch.getBackground().setTint(ContextCompat.getColor(requireContext(), color.getColorRes()));
+            }
+
+            swatch.setTag(color);
+            swatch.setOnClickListener(v -> {
+                selectedColor = color;
+                updateSwatchSelectionUi();
+            });
+            layoutColorSwatches.addView(swatch);
+            colorSwatchViews.add(swatch);
+        }
+
+        updateSwatchSelectionUi();
+    }
+
+    private void updateSwatchSelectionUi() {
+        for (View swatch : colorSwatchViews) {
+            boolean isSelected = swatch.getTag() == selectedColor;
+            swatch.setScaleX(isSelected ? 1.2f : 1f);
+            swatch.setScaleY(isSelected ? 1.2f : 1f);
+            swatch.setAlpha(isSelected ? 1f : 0.7f);
         }
     }
 }

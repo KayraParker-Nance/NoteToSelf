@@ -1,10 +1,14 @@
 package kpn.projects.notetoself.adapters;
 
+import android.content.Context;
+import android.content.res.ColorStateList;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -18,8 +22,7 @@ public class CalendarDayAdapter extends RecyclerView.Adapter<CalendarDayAdapter.
     public static class DayCell {
         public final LocalDate date;
         public final boolean inCurrentMonth;
-        public boolean hasDueDate;
-        public boolean hasRegular;
+        public List<Integer> dotColorResList = new ArrayList<>();
 
         public DayCell(LocalDate date, boolean inCurrentMonth) {
             this.date = date;
@@ -66,14 +69,12 @@ public class CalendarDayAdapter extends RecyclerView.Adapter<CalendarDayAdapter.
 
     class DayViewHolder extends RecyclerView.ViewHolder {
         private final TextView textDayNumber;
-        private final View dotDueDate;
-        private final View dotRegular;
+        private final LinearLayout layoutDots;
 
         DayViewHolder(@NonNull View itemView) {
             super(itemView);
             textDayNumber = itemView.findViewById(R.id.text_day_number);
-            dotDueDate = itemView.findViewById(R.id.dot_due_date);
-            dotRegular = itemView.findViewById(R.id.dot_regular);
+            layoutDots = itemView.findViewById(R.id.layout_dots);
         }
 
         void bind(DayCell cell) {
@@ -87,10 +88,29 @@ public class CalendarDayAdapter extends RecyclerView.Adapter<CalendarDayAdapter.
             int colorRes = isSelected ? R.color.white : (isToday ? R.color.nts_accent : R.color.nts_text_primary);
             textDayNumber.setTextColor(itemView.getContext().getColor(colorRes));
 
-            dotDueDate.setVisibility(cell.hasDueDate ? View.VISIBLE : View.GONE);
-            dotRegular.setVisibility(cell.hasRegular ? View.VISIBLE : View.GONE);
+            bindDots(cell.dotColorResList);
 
             itemView.setOnClickListener(v -> listener.onDayClicked(cell.date));
         }
+
+
+        private void bindDots(List<Integer> colorResList) {
+            layoutDots.removeAllViews();
+            Context context = itemView.getContext();
+            float density = context.getResources().getDisplayMetrics().density;
+            int dotSize = (int) (6 * density);
+            int dotMargin = (int) (2 * density);
+
+            for (Integer colorRes : colorResList) {
+                View dot = new View(context);
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(dotSize, dotSize);
+                params.setMarginEnd(dotMargin);
+                dot.setLayoutParams(params);
+                dot.setBackgroundResource(R.drawable.dot_indicator);
+                dot.setBackgroundTintList(ColorStateList.valueOf(context.getColor(colorRes)));
+                layoutDots.addView(dot);
+            }
+        }
+
     }
 }

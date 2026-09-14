@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 
 import kpn.projects.notetoself.enums.RecurrenceUnit;
 import kpn.projects.notetoself.enums.ScheduleMode;
+import kpn.projects.notetoself.enums.TaskColour;
 import kpn.projects.notetoself.enums.TaskType;
 
 @Entity(tableName = "tasks")
@@ -21,10 +22,8 @@ public class Task {
     @NonNull
     public TaskType type;
 
-    //DUE_DATE tasks only
     public LocalDateTime dueDate;
 
-    //REGULAR tasks only
     public int recurrenceInterval;
     public RecurrenceUnit recurrenceUnit;
     public LocalDate recurrenceStartDate;
@@ -33,4 +32,7 @@ public class Task {
     public boolean completed;
     @NonNull
     public LocalDateTime createdAt;
+
+    @NonNull
+    public TaskColour color = TaskColour.NONE;
 }

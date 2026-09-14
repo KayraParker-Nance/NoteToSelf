@@ -10,6 +10,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import kpn.projects.notetoself.enums.OccurrenceStatus;
+import kpn.projects.notetoself.enums.TaskColour;
 
 @Dao
 public interface TaskOccurrenceDao {
@@ -49,16 +50,17 @@ public interface TaskOccurrenceDao {
         public String title;
         public LocalDate scheduledDate;
         public OccurrenceStatus status;
+        public TaskColour color;
     }
 
-    @Query("SELECT o.id AS occurrenceId, o.taskId AS taskId, t.title AS title, o.scheduledDate AS scheduledDate " +
+    @Query("SELECT o.id AS occurrenceId, o.taskId AS taskId, t.title AS title, o.scheduledDate AS scheduledDate, t.color AS color " +
             "FROM task_occurrences o " +
             "JOIN tasks t ON t.id = o.taskId " +
             "WHERE o.status = 'PENDING' AND o.scheduledDate <= :end " +
             "ORDER BY o.scheduledDate ASC")
     LiveData<List<TaskOccurrenceWithTitle>> getPendingUpTo(LocalDate end);
 
-    @Query("SELECT o.id AS occurrenceId, o.taskId AS taskId, t.title AS title, o.scheduledDate AS scheduledDate, o.status AS status " +
+    @Query("SELECT o.id AS occurrenceId, o.taskId AS taskId, t.title AS title, o.scheduledDate AS scheduledDate, o.status AS status, t.color AS color " +
             "FROM task_occurrences o " +
             "JOIN tasks t ON t.id = o.taskId " +
             "WHERE o.scheduledDate BETWEEN :start AND :end " +

@@ -13,11 +13,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:src="@android:drawable/ic_media_previous"
         android:contentDescription="@string/action_previous_month"
+        android:src="@android:drawable/ic_media_previous"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@id/text_month_year"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/text_month_year"
-        app:layout_constraintBottom_toBottomOf="@id/text_month_year" />
+        app:layout_constraintTop_toTopOf="@id/text_month_year" />
 
     <TextView
         android:id="@+id/text_month_year"
@@ -36,11 +37,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:src="@android:drawable/ic_media_next"
         android:contentDescription="@string/action_next_month"
+        android:src="@android:drawable/ic_media_next"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@id/text_month_year"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/text_month_year"
-        app:layout_constraintBottom_toBottomOf="@id/text_month_year" />
+        app:layout_constraintTop_toTopOf="@id/text_month_year" />
 
     <LinearLayout
         android:id="@+id/layout_weekday_header"

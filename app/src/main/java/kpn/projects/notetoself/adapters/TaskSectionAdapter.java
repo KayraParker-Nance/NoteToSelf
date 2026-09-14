@@ -10,6 +10,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.card.MaterialCardView;
+
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -96,12 +98,14 @@ public class TaskSectionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     class TaskViewHolder extends RecyclerView.ViewHolder {
+        private final MaterialCardView card;
         private final CheckBox checkbox;
         private final TextView title;
         private final TextView subtitle;
 
         TaskViewHolder(@NonNull View itemView) {
             super(itemView);
+            card = (MaterialCardView) itemView;
             checkbox = itemView.findViewById(R.id.checkbox_task_complete);
             title = itemView.findViewById(R.id.text_task_title);
             subtitle = itemView.findViewById(R.id.text_task_subtitle);
@@ -118,7 +122,8 @@ public class TaskSectionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 subtitle.setVisibility(View.GONE);
             }
 
-            // avoid re-triggering the listener while we set the checkbox to match data
+            TaskColourUI.apply(card, task.color);
+
             checkbox.setOnCheckedChangeListener(null);
             checkbox.setChecked(task.completed);
             checkbox.setOnCheckedChangeListener((buttonView, isChecked) ->
@@ -175,12 +180,13 @@ public class TaskSectionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         public boolean areContentsTheSame(int oldPos, int newPos) {
             Row o = oldRows.get(oldPos);
             Row n = newRows.get(newPos);
-            if (o instanceof HeaderRow) return true; // header text is constant per adapter instance
+            if (o instanceof HeaderRow) return true;
             Task ot = ((TaskRow) o).task;
             Task nt = ((TaskRow) n).task;
             return ot.completed == nt.completed
                     && Objects.equals(ot.title, nt.title)
-                    && Objects.equals(ot.dueDate, nt.dueDate);
+                    && Objects.equals(ot.dueDate, nt.dueDate)
+                    && ot.color == nt.color;
         }
     }
 }

@@ -21,6 +21,7 @@ import kpn.projects.notetoself.AppDatabase;
 import kpn.projects.notetoself.enums.OccurrenceStatus;
 import kpn.projects.notetoself.enums.RecurrenceUnit;
 import kpn.projects.notetoself.enums.ScheduleMode;
+import kpn.projects.notetoself.enums.TaskColour;
 import kpn.projects.notetoself.enums.TaskType;
 import kpn.projects.notetoself.tasks.NotificationConfig;
 import kpn.projects.notetoself.tasks.Task;
@@ -98,6 +99,7 @@ public class BackupManager {
             o.put("scheduleMode", t.scheduleMode != null ? t.scheduleMode.name() : JSONObject.NULL);
             o.put("completed", t.completed);
             o.put("createdAt", t.createdAt.toString());
+            o.put("color", t.color != null ? t.color.name() : TaskColour.NONE.name());
             arr.put(o);
         }
         return arr;
@@ -119,6 +121,7 @@ public class BackupManager {
             t.scheduleMode = o.isNull("scheduleMode") ? null : ScheduleMode.valueOf(o.getString("scheduleMode"));
             t.completed = o.getBoolean("completed");
             t.createdAt = LocalDateTime.parse(o.getString("createdAt"));
+            t.color = (o.has("color") && !o.isNull("color")) ? TaskColour.valueOf(o.getString("color")) : TaskColour.NONE;
             list.add(t);
         }
         return list;
