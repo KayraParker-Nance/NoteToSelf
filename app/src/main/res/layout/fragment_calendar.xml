@@ -1,16 +1,143 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/nts_background">
+    android:background="@color/nts_background"
+    android:padding="16dp">
 
-    <TextView
-        android:id="@+id/text_placeholder"
+    <ImageButton
+        android:id="@+id/button_prev_month"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:textAppearance="@style/TextAppearance.NoteToSelf.TaskTitle"
-        tools:text="Screen name" />
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@android:drawable/ic_media_previous"
+        android:contentDescription="@string/action_previous_month"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/text_month_year"
+        app:layout_constraintBottom_toBottomOf="@id/text_month_year" />
 
-</FrameLayout>
+    <TextView
+        android:id="@+id/text_month_year"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textAppearance="@style/TextAppearance.NoteToSelf.TaskTitle"
+        android:textSize="18sp"
+        app:layout_constraintStart_toEndOf="@id/button_prev_month"
+        app:layout_constraintEnd_toStartOf="@id/button_next_month"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="September 2026" />
+
+    <ImageButton
+        android:id="@+id/button_next_month"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@android:drawable/ic_media_next"
+        android:contentDescription="@string/action_next_month"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/text_month_year"
+        app:layout_constraintBottom_toBottomOf="@id/text_month_year" />
+
+    <LinearLayout
+        android:id="@+id/layout_weekday_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/text_month_year">
+
+        <TextView android:id="@+id/text_weekday_1" style="@style/WeekdayLabel" />
+        <TextView android:id="@+id/text_weekday_2" style="@style/WeekdayLabel" />
+        <TextView android:id="@+id/text_weekday_3" style="@style/WeekdayLabel" />
+        <TextView android:id="@+id/text_weekday_4" style="@style/WeekdayLabel" />
+        <TextView android:id="@+id/text_weekday_5" style="@style/WeekdayLabel" />
+        <TextView android:id="@+id/text_weekday_6" style="@style/WeekdayLabel" />
+        <TextView android:id="@+id/text_weekday_7" style="@style/WeekdayLabel" />
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_days"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        app:layout_constraintTop_toBottomOf="@id/layout_weekday_header"
+        tools:listitem="@layout/item_calendar_day" />
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="12dp"
+        android:alpha="0.2"
+        android:background="@color/nts_text_secondary"
+        app:layout_constraintTop_toBottomOf="@id/recycler_days" />
+
+    <TextView
+        android:id="@+id/text_selected_date"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:textAppearance="@style/TextAppearance.NoteToSelf.SectionHeader"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/divider"
+        tools:text="Tuesday, 15 Sep" />
+
+    <LinearLayout
+        android:id="@+id/layout_add_buttons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/text_selected_date">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_add_due_date"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginEnd="4dp"
+            android:textSize="12sp"
+            android:text="@string/action_add_due_date_here" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_add_regular"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="4dp"
+            android:textSize="12sp"
+            android:text="@string/action_add_regular_here" />
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@id/layout_add_buttons"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_day_tasks"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:listitem="@layout/item_task" />
+
+        <TextView
+            android:id="@+id/text_empty_state"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/text_no_tasks_this_day"
+            android:textAppearance="@style/TextAppearance.NoteToSelf.TaskSubtitle"
+            android:visibility="gone" />
+
+    </FrameLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

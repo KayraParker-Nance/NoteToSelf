@@ -112,7 +112,6 @@ public class TaskRepository {
         });
     }
 
-    // REGULAR tasks — completes this cycle only; the generation worker creates the next one
     public void completeOccurrence(long occurrenceId) {
         executor.execute(() ->
                 occurrenceDao.markCompleted(occurrenceId, LocalDateTime.now()));
@@ -131,5 +130,23 @@ public class TaskRepository {
 
     public LiveData<Task> getTask(long taskId) {
         return taskDao.getTaskByIdLive(taskId);
+    }
+
+    public LiveData<List<Task>> getDueDateTasksInRange(LocalDate start, LocalDate end) {
+        return taskDao.getDueDateTasksInRange(start, end);
+    }
+
+    public LiveData<List<TaskOccurrenceDao.TaskOccurrenceWithTitle>> getOccurrencesInRange(LocalDate start, LocalDate end) {
+        return occurrenceDao.getOccurrencesInRange(start, end);
+    }
+
+    public void updateTaskCompleted(long taskId, boolean completed) {
+        executor.execute(() -> {
+            Task task = taskDao.getByIdSync(taskId);
+            if (task != null) {
+                task.completed = completed;
+                taskDao.updateTask(task);
+            }
+        });
     }
 }

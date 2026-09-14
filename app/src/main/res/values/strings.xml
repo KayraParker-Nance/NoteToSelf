@@ -39,4 +39,10 @@
     <string name="action_complete">Complete</string>
     <string name="action_snooze">Snooze</string>
     <string name="notification_subtitle_todo">Todo</string>
+
+    <string name="action_previous_month">Previous month</string>
+    <string name="action_next_month">Next month</string>
+    <string name="action_add_due_date_here">+ Due date</string>
+    <string name="action_add_regular_here">+ Regular</string>
+    <string name="text_no_tasks_this_day">No tasks this day</string>
 </resources>

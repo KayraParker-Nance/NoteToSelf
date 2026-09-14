@@ -9,6 +9,8 @@ import androidx.room.Update;
 import java.time.LocalDate;
 import java.util.List;
 
+import kpn.projects.notetoself.enums.OccurrenceStatus;
+
 @Dao
 public interface TaskOccurrenceDao {
     @Insert
@@ -29,7 +31,6 @@ public interface TaskOccurrenceDao {
     @Query("SELECT COUNT(*) FROM task_occurrences WHERE taskId = :taskId AND status = 'PENDING'")
     int countPendingForTask(long taskId);
 
-    // Full history for a task for the "how early/late was I" view
     @Query("SELECT * FROM task_occurrences WHERE taskId = :taskId ORDER BY scheduledDate DESC")
     LiveData<List<TaskOccurrence>> getHistoryForTask(long taskId);
 
@@ -47,6 +48,7 @@ public interface TaskOccurrenceDao {
         public long taskId;
         public String title;
         public LocalDate scheduledDate;
+        public OccurrenceStatus status;
     }
 
     @Query("SELECT o.id AS occurrenceId, o.taskId AS taskId, t.title AS title, o.scheduledDate AS scheduledDate " +
@@ -55,6 +57,13 @@ public interface TaskOccurrenceDao {
             "WHERE o.status = 'PENDING' AND o.scheduledDate <= :end " +
             "ORDER BY o.scheduledDate ASC")
     LiveData<List<TaskOccurrenceWithTitle>> getPendingUpTo(LocalDate end);
+
+    @Query("SELECT o.id AS occurrenceId, o.taskId AS taskId, t.title AS title, o.scheduledDate AS scheduledDate, o.status AS status " +
+            "FROM task_occurrences o " +
+            "JOIN tasks t ON t.id = o.taskId " +
+            "WHERE o.scheduledDate BETWEEN :start AND :end " +
+            "ORDER BY o.scheduledDate ASC")
+    LiveData<List<TaskOccurrenceWithTitle>> getOccurrencesInRange(LocalDate start, LocalDate end);
 
     @Query("SELECT * FROM task_occurrences WHERE taskId = :taskId AND status = 'PENDING' " +
             "AND scheduledDate <= :today ORDER BY scheduledDate ASC LIMIT 1")

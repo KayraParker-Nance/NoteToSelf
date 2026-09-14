@@ -45,6 +45,15 @@
             android:name="taskId"
             app:argType="long"
             android:defaultValue="-1L" />
+        <argument
+            android:name="presetDateEpochDay"
+            app:argType="long"
+            android:defaultValue="-1L" />
+        <argument
+            android:name="presetType"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
     </fragment>
 
 </navigation>

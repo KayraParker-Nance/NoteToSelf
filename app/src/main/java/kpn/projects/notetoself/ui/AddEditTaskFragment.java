@@ -95,7 +95,7 @@ public class AddEditTaskFragment extends Fragment {
             buttonDelete.setVisibility(View.VISIBLE);
             observeExistingTask();
         } else {
-            radioGroupType.check(R.id.radio_todo); // sensible default for a brand-new task
+            applyPresetsOrDefault();
         }
     }
 
@@ -297,6 +297,28 @@ public class AddEditTaskFragment extends Fragment {
             return Integer.parseInt(text);
         } catch (NumberFormatException e) {
             return 0;
+        }
+    }
+
+    private void applyPresetsOrDefault() {
+        long presetEpochDay = getArguments() != null ? getArguments().getLong("presetDateEpochDay", -1L) : -1L;
+        String presetType = getArguments() != null ? getArguments().getString("presetType") : null;
+        LocalDate presetDate = presetEpochDay != -1L ? LocalDate.ofEpochDay(presetEpochDay) : null;
+
+        if ("REGULAR".equals(presetType)) {
+            radioGroupType.check(R.id.radio_regular);
+            if (presetDate != null) {
+                selectedStartDate = presetDate;
+                textStartDateValue.setText(presetDate.format(DISPLAY_FORMAT));
+            }
+        } else if ("DUE_DATE".equals(presetType)) {
+            radioGroupType.check(R.id.radio_due_date);
+            if (presetDate != null) {
+                selectedDueDate = presetDate;
+                textDueDateValue.setText(presetDate.format(DISPLAY_FORMAT));
+            }
+        } else {
+            radioGroupType.check(R.id.radio_todo);
         }
     }
 }
