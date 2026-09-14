@@ -14,8 +14,14 @@ public interface TaskOccurrenceDao {
     @Insert
     long insert(TaskOccurrence occurrence);
 
+    @Insert
+    void insertOccurrences(List<TaskOccurrence> occurrences);
+
     @Update
     void update(TaskOccurrence occurrence);
+
+    @Query("SELECT * FROM task_occurrences")
+    List<TaskOccurrence> getAllSync();
 
     @Query("SELECT * FROM task_occurrences WHERE scheduledDate = :day AND status = 'PENDING'")
     LiveData<List<TaskOccurrence>> getPendingForDay(LocalDate day);

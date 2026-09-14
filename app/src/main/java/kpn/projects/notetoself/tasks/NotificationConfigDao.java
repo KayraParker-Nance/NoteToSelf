@@ -16,11 +16,17 @@ public interface NotificationConfigDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(NotificationConfig config);
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertConfigs(List<NotificationConfig> configs);
+
     @Update
     void update(NotificationConfig config);
 
     @Delete
     void delete(NotificationConfig config);
+
+    @Query("SELECT * FROM notification_configs")
+    List<NotificationConfig> getAllConfigsSync();
 
     @Query("SELECT * FROM notification_configs WHERE taskId = :taskId")
     LiveData<NotificationConfig> getForTask(long taskId);

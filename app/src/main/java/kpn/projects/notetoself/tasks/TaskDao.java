@@ -18,14 +18,23 @@ public interface TaskDao {
     @Insert
     public Long insertTask(Task task);
 
+    @Insert
+    void insertTasks(List<Task> tasks);
+
     @Update
     public void updateTask(Task task);
 
     @Delete
     public void deleteTask(Task task);
 
+    @Query("DELETE FROM tasks")
+    void deleteAllTasks();
+
     @Query("SELECT * FROM tasks")
     public LiveData<List<Task>> getAllTasks();
+
+    @Query("SELECT * FROM tasks")
+    List<Task> getAllTasksSync();
 
     @Query("SELECT * FROM tasks WHERE id = :id")
     public Task getByIdSync(long id);
