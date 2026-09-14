@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="nts_background">#FAFAFA</color>
+    <color name="nts_surface">#FFFFFF</color>
+    <color name="nts_text_primary">#1A1A1A</color>
+    <color name="nts_text_secondary">#6B6B6B</color>
+    <color name="nts_accent">#3F51B5</color>
+    <color name="nts_due_soon">#D32F2F</color>
+</resources>

@@ -1,0 +1,42 @@
+<resources>
+    <string name="app_name">NoteToSelf</string>
+    <string name="due_date_format">Due %s</string>
+    <string name="section_due_this_week">Due this week</string>
+    <string name="section_todos">Todos</string>
+    <string name="section_regular">Regular</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_home">Home</string>
+    <string name="title_calendar">Calendar</string>
+    <string name="title_history">History</string>
+    <string name="title_settings">Settings</string>
+    <string name="title_add_edit_task">Add or Edit Task</string>
+    <string name="add_task">Add Task</string>
+
+    <string name="hint_title">Title</string>
+    <string name="hint_description">Description (optional)</string>
+    <string name="label_type">Type</string>
+    <string name="type_due_date">Due date</string>
+    <string name="type_todo">Todo</string>
+    <string name="type_regular">Regular</string>
+    <string name="action_pick_due_date">Pick due date</string>
+    <string name="hint_interval">Every</string>
+    <string name="schedule_fixed">Fixed (same day each time)</string>
+    <string name="schedule_floating">Floating (after completion)</string>
+    <string name="action_pick_start_date">Pick start date</string>
+    <string name="label_reminders">Reminders</string>
+    <string name="label_sticky_notification">Sticky notification</string>
+    <string name="action_pick_show_after">Only show after date (optional)</string>
+    <string name="hint_repeat_hours">Repeat reminder every N hours (optional)</string>
+    <string name="action_save">Save</string>
+    <string name="action_delete">Delete task</string>
+    <string name="error_title_required">Title is required</string>
+
+    <string name="channel_sticky_name">Task reminders</string>
+    <string name="channel_sticky_description">Ongoing summary of your active tasks</string>
+    <string name="sticky_notification_title">Your tasks</string>
+    <string name="sticky_notification_placeholder">Tap to open NoteToSelf</string>
+    <string name="action_complete">Complete</string>
+    <string name="action_snooze">Snooze</string>
+    <string name="notification_subtitle_todo">Todo</string>
+</resources>

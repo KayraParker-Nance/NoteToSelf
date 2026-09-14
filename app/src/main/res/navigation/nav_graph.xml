@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/home">
+
+    <fragment
+        android:id="@+id/home"
+        android:name="kpn.projects.notetoself.ui.HomeFragment"
+        android:label="@string/title_home"
+        tools:layout="@layout/fragment_home">
+
+        <action
+            android:id="@+id/action_home_to_addEditTask"
+            app:destination="@id/addEditTask" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/calendar"
+        android:name="kpn.projects.notetoself.ui.CalendarFragment"
+        android:label="@string/title_calendar">
+
+        <action
+            android:id="@+id/action_calendar_to_addEditTask"
+            app:destination="@id/addEditTask" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/history"
+        android:name="kpn.projects.notetoself.ui.HistoryFragment"
+        android:label="@string/title_history" />
+
+    <fragment
+        android:id="@+id/settings"
+        android:name="kpn.projects.notetoself.ui.SettingsFragment"
+        android:label="@string/title_settings" />
+
+    <fragment
+        android:id="@+id/addEditTask"
+        android:name="kpn.projects.notetoself.ui.AddEditTaskFragment"
+        android:label="@string/title_add_edit_task">
+
+        <argument
+            android:name="taskId"
+            app:argType="long"
+            android:defaultValue="-1L" />
+    </fragment>
+
+</navigation>
