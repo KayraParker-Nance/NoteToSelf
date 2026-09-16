@@ -8,11 +8,19 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.os.Bundle;
 import android.service.notification.StatusBarNotification;
 
+import androidx.annotation.ColorRes;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.ColorUtils;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -25,6 +33,7 @@ import java.util.concurrent.Executors;
 import kpn.projects.notetoself.AppDatabase;
 import kpn.projects.notetoself.NoteToSelfApp;
 import kpn.projects.notetoself.R;
+import kpn.projects.notetoself.enums.TaskColour;
 import kpn.projects.notetoself.tasks.NotificationConfig;
 import kpn.projects.notetoself.tasks.Task;
 import kpn.projects.notetoself.tasks.TaskOccurrence;
@@ -105,12 +114,12 @@ public class NotificationRefreshReceiver extends BroadcastReceiver {
             case DUE_DATE:
                 if (!task.completed && task.dueDate != null) {
                     return new NotificationItem(task.id, null, task.title,
-                            task.dueDate.toLocalDate().format(DATE_FORMAT));
+                            task.dueDate.toLocalDate().format(DATE_FORMAT), task.color);
                 }
                 return null;
             case TODO:
                 if (!task.completed) {
-                    return new NotificationItem(task.id, null, task.title, task.description);
+                    return new NotificationItem(task.id, null, task.title, task.description, task.color);
                 }
                 return null;
             case REGULAR:
@@ -118,7 +127,7 @@ public class NotificationRefreshReceiver extends BroadcastReceiver {
                         .getDueOrOverduePendingForTaskSync(task.id, LocalDate.now());
                 if (occurrence != null) {
                     return new NotificationItem(task.id, occurrence.id, task.title,
-                            occurrence.scheduledDate.format(DATE_FORMAT));
+                            occurrence.scheduledDate.format(DATE_FORMAT), task.color);
                 }
                 return null;
             default:
@@ -129,24 +138,31 @@ public class NotificationRefreshReceiver extends BroadcastReceiver {
     private static void post(Context context, NotificationItem item) {
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
                 != PackageManager.PERMISSION_GRANTED) {
-            return; // user hasn't granted it — nothing we can do until they do
+            return;
         }
 
         Intent openAppIntent = new Intent(context, MainActivity.class);
         PendingIntent contentIntent = PendingIntent.getActivity(
                 context, item.notificationId(), openAppIntent, PendingIntent.FLAG_IMMUTABLE);
 
+        boolean hasColor = item.color != null && item.color != TaskColour.NONE;
+        int accentColor = hasColor ? ContextCompat.getColor(context, item.color.getColorRes()) : PINK_ACCENT;
+
+        Bundle extras = new Bundle();
+        extras.putBoolean("android.preferSmallIcon", true);
+        extras.putBoolean("android.support.preferSmallIcon", true);
+
         Notification notification = new NotificationCompat.Builder(context, NoteToSelfApp.STICKY_CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_stat_notification)
-                .setColor(PINK_ACCENT)
+                .setColor(accentColor)
                 .setContentTitle(item.title)
                 .setContentText(item.subtitle)
-                .setOngoing(true)
                 .setContentIntent(contentIntent)
                 .addAction(0, context.getString(R.string.action_complete),
                         buildActionPendingIntent(context, NotificationActionReceiver.ACTION_COMPLETE, item))
                 .addAction(0, context.getString(R.string.action_snooze),
                         buildActionPendingIntent(context, NotificationActionReceiver.ACTION_SNOOZE, item))
+                .addExtras(extras)
                 .build();
 
         NotificationManagerCompat.from(context).notify(item.notificationId(), notification);
@@ -165,4 +181,7 @@ public class NotificationRefreshReceiver extends BroadcastReceiver {
         return PendingIntent.getBroadcast(context, requestCode, intent,
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
     }
+
+    private static final float STROKE_DARKEN_AMOUNT = 0.18f;
+    private static final int LARGE_ICON_SIZE_DP = 48;
 }
