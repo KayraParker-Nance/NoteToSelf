@@ -56,4 +56,25 @@
             android:defaultValue="@null" />
     </fragment>
 
+    <fragment
+        android:id="@+id/schedule"
+        android:name="kpn.projects.notetoself.ui.ScheduleFragment"
+        android:label="@string/title_schedule">
+
+        <action
+            android:id="@+id/action_schedule_to_addEditClass"
+            app:destination="@id/addEditClass" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/addEditClass"
+        android:name="kpn.projects.notetoself.ui.AddEditClassFragment"
+        android:label="@string/title_add_edit_class">
+
+        <argument
+            android:name="classId"
+            app:argType="long"
+            android:defaultValue="-1L" />
+    </fragment>
+
 </navigation>

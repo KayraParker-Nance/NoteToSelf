@@ -121,6 +121,7 @@ public class AddEditTaskFragment extends Fragment {
         buttonPickStartDate = view.findViewById(R.id.button_pick_start_date);
         textStartDateValue = view.findViewById(R.id.text_start_date_value);
         switchSticky = view.findViewById(R.id.switch_sticky);
+        switchSticky.setChecked(true);
         buttonPickShowAfter = view.findViewById(R.id.button_pick_show_after);
         textShowAfterValue = view.findViewById(R.id.text_show_after_value);
         inputRepeatHours = view.findViewById(R.id.input_repeat_hours);
@@ -336,11 +337,14 @@ public class AddEditTaskFragment extends Fragment {
 
     private void setupColorPicker() {
         layoutColorSwatches.removeAllViews();
+
         colorSwatchViews.clear();
 
         float density = getResources().getDisplayMetrics().density;
         int size = (int) (36 * density);
         int margin = (int) (8 * density);
+
+        layoutColorSwatches.setMinimumHeight((int)(36 * density * 1.5));
 
         for (TaskColour color : TaskColour.values()) {
             View swatch = new View(requireContext());

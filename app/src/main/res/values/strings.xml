@@ -3,7 +3,7 @@
     <string name="due_date_format">Due %s</string>
     <string name="section_due_this_week">Due this week</string>
     <string name="section_todos">Todos</string>
-    <string name="section_regular">Regular</string>
+    <string name="section_regular">Repeating</string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_home">Home</string>
@@ -18,7 +18,7 @@
     <string name="label_type">Type</string>
     <string name="type_due_date">Due date</string>
     <string name="type_todo">Todo</string>
-    <string name="type_regular">Regular</string>
+    <string name="type_regular">Repeating</string>
     <string name="action_pick_due_date">Pick due date</string>
     <string name="hint_interval">Every</string>
     <string name="schedule_fixed">Fixed (same day each time)</string>
@@ -46,8 +46,18 @@
     <string name="action_previous_month">Previous month</string>
     <string name="action_next_month">Next month</string>
     <string name="action_add_due_date_here">+ Due date</string>
-    <string name="action_add_regular_here">+ Regular</string>
+    <string name="action_add_regular_here">+ Repeating</string>
     <string name="text_no_tasks_this_day">No tasks this day</string>
 
     <string name="label_colour">Color</string>
+
+    <string name="title_schedule">Schedule</string>
+    <string name="title_add_edit_class">Add or Edit Class</string>
+    <string name="hint_class_title">Class name</string>
+    <string name="hint_class_location">Location (optional)</string>
+    <string name="label_day">Day</string>
+    <string name="action_pick_start_time">Start time</string>
+    <string name="action_pick_end_time">End time</string>
+    <string name="class_time_format">%1$s – %2$s</string>
+    <string name="add_class">Add Class</string>
 </resources>
