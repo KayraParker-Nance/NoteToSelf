@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="TextAppearance.NoteToSelf.SectionHeader" parent="TextAppearance.MaterialComponents.Subtitle2">
+    <style name="TextAppearance.NoteToSelf.SectionHeader" parent="TextAppearance.Material3.LabelLarge">
         <item name="android:textColor">@color/nts_text_secondary</item>
         <item name="android:textAllCaps">true</item>
-        <item name="android:letterSpacing">0.05</item>
+        <item name="android:letterSpacing">0.08</item>
     </style>
 
-    <style name="TextAppearance.NoteToSelf.TaskTitle" parent="TextAppearance.MaterialComponents.Body1">
+    <style name="TextAppearance.NoteToSelf.TaskTitle" parent="TextAppearance.Material3.TitleMedium">
         <item name="android:textColor">@color/nts_text_primary</item>
     </style>
 
-    <style name="TextAppearance.NoteToSelf.TaskSubtitle" parent="TextAppearance.MaterialComponents.Caption">
+    <style name="TextAppearance.NoteToSelf.TaskSubtitle" parent="TextAppearance.Material3.BodySmall">
         <item name="android:textColor">@color/nts_text_secondary</item>
     </style>
 
-    <style name="Widget.NoteToSelf.TaskCard" parent="Widget.MaterialComponents.CardView">
-        <item name="cardCornerRadius">12dp</item>
-        <item name="cardElevation">1dp</item>
-        <item name="contentPadding">12dp</item>
+    <style name="Widget.NoteToSelf.TaskCard" parent="Widget.Material3.CardView.Filled">
+        <item name="cardCornerRadius">16dp</item>
+        <item name="cardElevation">0dp</item>
+        <item name="contentPadding">14dp</item>
         <item name="cardBackgroundColor">@color/nts_surface</item>
     </style>
 

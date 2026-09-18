@@ -18,18 +18,20 @@ public class TaskColourUI {
     public static void apply(MaterialCardView card, TaskColour color) {
         Context context = card.getContext();
 
+        float density = context.getResources().getDisplayMetrics().density;
+
         if (color == null || color == TaskColour.NONE) {
             card.setCardBackgroundColor(ContextCompat.getColor(context, R.color.nts_surface));
-            card.setStrokeWidth(0);
+            card.setStrokeColor(ContextCompat.getColor(context, R.color.nts_outline));
+            card.setStrokeWidth((int) (1 * density));
             return;
         }
 
         int baseColor = ContextCompat.getColor(context, color.getColorRes());
         int strokeColor = ColorUtils.blendARGB(baseColor, Color.BLACK, STROKE_DARKEN_AMOUNT);
-        float density = context.getResources().getDisplayMetrics().density;
 
         card.setCardBackgroundColor(baseColor);
         card.setStrokeColor(strokeColor);
-        card.setStrokeWidth((int) (STROKE_WIDTH_DP * density));
+        card.setStrokeWidth((int) (1 * density));
     }
 }

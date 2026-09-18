@@ -1,8 +1,15 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Base.Theme.NoteToSelf" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorPrimary">@color/nts_accent</item>
+        <item name="colorOnPrimary">@color/nts_on_accent</item>
+        <item name="colorPrimaryContainer">@color/nts_accent_container</item>
+        <item name="colorOnPrimaryContainer">@color/nts_on_accent_container</item>
+        <item name="colorSecondaryContainer">@color/nts_accent_container</item>
+        <item name="colorOnSecondaryContainer">@color/nts_on_accent_container</item>
+        <item name="colorSurface">@color/nts_surface</item>
+        <item name="colorOnSurface">@color/nts_text_primary</item>
+        <item name="android:colorBackground">@color/nts_background</item>
     </style>
 
     <style name="Theme.NoteToSelf" parent="Base.Theme.NoteToSelf" />

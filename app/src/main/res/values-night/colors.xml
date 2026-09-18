@@ -2,11 +2,15 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="nts_background">#121212</color>
-    <color name="nts_surface">#1E1E1E</color>
-    <color name="nts_text_primary">#EDEDED</color>
-    <color name="nts_text_secondary">#B0B0B0</color>
-    <color name="nts_accent">#7986CB</color>
+    <color name="nts_background">#161113</color>
+    <color name="nts_surface">#211A1D</color>
+    <color name="nts_text_primary">#F0E6EA</color>
+    <color name="nts_text_secondary">#BFAAB2</color>
+    <color name="nts_accent">#F4A6C4</color>
+    <color name="nts_on_accent">#3A1B2A</color>
+    <color name="nts_accent_container">#5C2E44</color>
+    <color name="nts_on_accent_container">#FFD9E6</color>
+    <color name="nts_outline">#3D3136</color>
     <color name="nts_due_soon">#EF5350</color>
 
     <color name="task_pink">#6B4A57</color>

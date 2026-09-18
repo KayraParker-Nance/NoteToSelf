@@ -1,5 +1,6 @@
 package kpn.projects.notetoself.adapters;
 
+import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -130,6 +131,11 @@ public class TaskSectionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     listener.onTaskChecked(task, isChecked));
 
             itemView.setOnClickListener(v -> listener.onTaskClicked(task));
+
+            title.setPaintFlags(task.completed
+                    ? title.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG
+                    : title.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
+            itemView.setAlpha(task.completed ? 0.55f : 1f);
         }
     }
 
