@@ -73,4 +73,8 @@ public interface TaskOccurrenceDao {
 
     @Query("SELECT * FROM task_occurrences WHERE id = :id")
     TaskOccurrence getByIdSync(long id);
+
+    @Query("SELECT * FROM task_occurrences WHERE taskId = :taskId AND status = 'PENDING' " +
+            "ORDER BY scheduledDate ASC LIMIT 1")
+    TaskOccurrence getPendingForTaskSync(long taskId);
 }

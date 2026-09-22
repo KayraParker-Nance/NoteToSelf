@@ -132,7 +132,7 @@ public class NotificationRefreshReceiver extends BroadcastReceiver {
                 return null;
             case REGULAR:
                 TaskOccurrence occurrence = db.taskOccurrenceDao()
-                        .getDueOrOverduePendingForTaskSync(task.id, LocalDate.now());
+                        .getPendingForTaskSync(task.id);
                 if (occurrence != null) {
                     return new NotificationItem(task.id, occurrence.id, task.title,
                             occurrence.scheduledDate.format(DATE_FORMAT), task.color);
