@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import kpn.projects.notetoself.R;
+import kpn.projects.notetoself.enums.ReminderUnit;
 import kpn.projects.notetoself.enums.TaskColour;
 import kpn.projects.notetoself.notifications.NotificationRefreshReceiver;
 import kpn.projects.notetoself.tasks.NotificationConfig;
@@ -75,6 +76,8 @@ public class AddEditTaskFragment extends Fragment {
     private LinearLayout layoutColorSwatches;
     private TaskColour selectedColor = TaskColour.NONE;
     private final List<View> colorSwatchViews = new ArrayList<>();
+    private EditText inputRepeatInterval;
+    private Spinner spinnerRepeatUnit;
 
     @Nullable
     @Override
@@ -124,10 +127,11 @@ public class AddEditTaskFragment extends Fragment {
         switchSticky.setChecked(true);
         buttonPickShowAfter = view.findViewById(R.id.button_pick_show_after);
         textShowAfterValue = view.findViewById(R.id.text_show_after_value);
-        inputRepeatHours = view.findViewById(R.id.input_repeat_hours);
         buttonSave = view.findViewById(R.id.button_save);
         buttonDelete = view.findViewById(R.id.button_delete);
         layoutColorSwatches = view.findViewById(R.id.layout_color_swatches);
+        inputRepeatInterval = view.findViewById(R.id.input_repeat_interval);
+        spinnerRepeatUnit = view.findViewById(R.id.spinner_repeat_unit);
     }
 
     private void setupTypeGroup() {
@@ -141,6 +145,10 @@ public class AddEditTaskFragment extends Fragment {
         ArrayAdapter<RecurrenceUnit> adapter = new ArrayAdapter<>(
                 requireContext(), android.R.layout.simple_spinner_dropdown_item, RecurrenceUnit.values());
         spinnerRecurrenceUnit.setAdapter(adapter);
+
+        spinnerRepeatUnit.setAdapter(new ArrayAdapter<>(
+                requireContext(), android.R.layout.simple_spinner_dropdown_item, ReminderUnit.values()));
+
     }
 
     private void setupDatePickers() {
@@ -195,9 +203,11 @@ public class AddEditTaskFragment extends Fragment {
                 selectedShowAfterDate = config.showAfterDate.toLocalDate();
                 textShowAfterValue.setText(selectedShowAfterDate.format(DISPLAY_FORMAT));
             }
-            if (config.repeatIntervalHours > 0) {
-                inputRepeatHours.setText(String.valueOf(config.repeatIntervalHours));
+            if (config.repeatInterval > 0) {
+                inputRepeatInterval.setText(String.valueOf(config.repeatInterval));
             }
+            spinnerRepeatUnit.setSelection(config.repeatUnit.ordinal()); // adapter is built from values(), same order
+
         });
     }
 
@@ -277,7 +287,8 @@ public class AddEditTaskFragment extends Fragment {
         config.stickyEnabled = switchSticky.isChecked();
         config.enabled = switchSticky.isChecked();
         config.showAfterDate = selectedShowAfterDate != null ? selectedShowAfterDate.atStartOfDay() : null;
-        config.repeatIntervalHours = parseRepeatHoursOrDefault();
+        config.repeatInterval = parseRepeatIntervalOrZero();
+        config.repeatUnit = (ReminderUnit) spinnerRepeatUnit.getSelectedItem();
 
         if (isEditMode) {
             config.taskId = taskId;
@@ -304,10 +315,9 @@ public class AddEditTaskFragment extends Fragment {
         }
     }
 
-    private int parseRepeatHoursOrDefault() {
-        String text = inputRepeatHours.getText().toString().trim();
+    private int parseRepeatIntervalOrZero() {
         try {
-            return Integer.parseInt(text);
+            return Math.max(0, Integer.parseInt(inputRepeatInterval.getText().toString().trim()));
         } catch (NumberFormatException e) {
             return 0;
         }

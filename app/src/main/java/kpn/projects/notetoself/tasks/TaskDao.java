@@ -56,4 +56,8 @@ public interface TaskDao {
 
     @Query("SELECT * FROM tasks WHERE id = :taskId")
     LiveData<Task> getTaskByIdLive(long taskId);
+
+    @Query("SELECT * FROM tasks WHERE type = 'DUE_DATE' AND completed = 0 " +
+            "AND date(dueDate) BETWEEN date(:start) AND date(:end) ORDER BY dueDate ASC")
+    LiveData<List<Task>> getActiveDueDateTasksInRange(LocalDate start, LocalDate end);
 }

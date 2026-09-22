@@ -7,6 +7,7 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -92,6 +93,13 @@ public class RegularTaskSectionAdapter extends RecyclerView.Adapter<RecyclerView
         } else {
             ((OccurrenceViewHolder) holder).bind(((OccurrenceRow) row).occurrence);
         }
+    }
+
+    @Nullable
+    public TaskOccurrenceDao.TaskOccurrenceWithTitle getOccurrenceAt(int position) {
+        if (position < 0 || position >= rows.size()) return null;
+        Row row = rows.get(position);
+        return row instanceof OccurrenceRow ? ((OccurrenceRow) row).occurrence : null;
     }
 
     class OccurrenceViewHolder extends RecyclerView.ViewHolder {

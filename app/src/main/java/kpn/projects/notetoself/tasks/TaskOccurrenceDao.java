@@ -70,4 +70,7 @@ public interface TaskOccurrenceDao {
     @Query("SELECT * FROM task_occurrences WHERE taskId = :taskId AND status = 'PENDING' " +
             "AND scheduledDate <= :today ORDER BY scheduledDate ASC LIMIT 1")
     TaskOccurrence getDueOrOverduePendingForTaskSync(long taskId, LocalDate today);
+
+    @Query("SELECT * FROM task_occurrences WHERE id = :id")
+    TaskOccurrence getByIdSync(long id);
 }

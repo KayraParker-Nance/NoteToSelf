@@ -87,8 +87,8 @@ public class CalendarViewModel extends AndroidViewModel {
         repository.updateTaskCompleted(taskId, checked);
     }
 
-    public void completeOccurrence(long occurrenceId) {
-        repository.completeOccurrence(occurrenceId);
+    public void completeOccurrence(long occurrenceId, Runnable onComplete) {
+        repository.completeOccurrence(occurrenceId, onComplete);
     }
 
     private void recomputeDayCells() {

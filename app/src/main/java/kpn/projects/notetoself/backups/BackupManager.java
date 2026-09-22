@@ -20,6 +20,7 @@ import java.util.concurrent.Executors;
 import kpn.projects.notetoself.AppDatabase;
 import kpn.projects.notetoself.enums.OccurrenceStatus;
 import kpn.projects.notetoself.enums.RecurrenceUnit;
+import kpn.projects.notetoself.enums.ReminderUnit;
 import kpn.projects.notetoself.enums.ScheduleMode;
 import kpn.projects.notetoself.enums.TaskColour;
 import kpn.projects.notetoself.enums.TaskType;
@@ -163,7 +164,8 @@ public class BackupManager {
             o.put("taskId", c.taskId);
             o.put("enabled", c.enabled);
             o.put("showAfterDate", c.showAfterDate != null ? c.showAfterDate.toString() : JSONObject.NULL);
-            o.put("repeatIntervalHours", c.repeatIntervalHours);
+            o.put("repeatInterval", c.repeatInterval);
+            o.put("repeatUnit", c.repeatUnit.name());
             o.put("stickyEnabled", c.stickyEnabled);
             o.put("snoozedUntil", c.snoozedUntil != null ? c.snoozedUntil.toString() : JSONObject.NULL);
             arr.put(o);
@@ -179,7 +181,13 @@ public class BackupManager {
             c.taskId = o.getLong("taskId");
             c.enabled = o.getBoolean("enabled");
             c.showAfterDate = o.isNull("showAfterDate") ? null : LocalDateTime.parse(o.getString("showAfterDate"));
-            c.repeatIntervalHours = o.getInt("repeatIntervalHours");
+            if (o.has("repeatInterval")) {
+                c.repeatInterval = o.getInt("repeatInterval");
+                c.repeatUnit = ReminderUnit.valueOf(o.getString("repeatUnit"));
+            } else {
+                c.repeatInterval = o.optInt("repeatIntervalHours", 0);
+                c.repeatUnit = ReminderUnit.HOUR;
+            }
             c.stickyEnabled = o.getBoolean("stickyEnabled");
             c.snoozedUntil = o.isNull("snoozedUntil") ? null : LocalDateTime.parse(o.getString("snoozedUntil"));
             list.add(c);

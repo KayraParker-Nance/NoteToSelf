@@ -27,7 +27,7 @@
     <string name="label_reminders">Reminders</string>
     <string name="label_sticky_notification">Sticky notification</string>
     <string name="action_pick_show_after">Only show after date (optional)</string>
-    <string name="hint_repeat_hours">Repeat reminder every N hours (optional)</string>
+    <string name="hint_remind_every">Remind every (optional)</string>
     <string name="action_save">Save</string>
     <string name="action_delete">Delete task</string>
     <string name="error_title_required">Title is required</string>
@@ -60,4 +60,9 @@
     <string name="action_pick_end_time">End time</string>
     <string name="class_time_format">%1$s – %2$s</string>
     <string name="add_class">Add Class</string>
+
+    <string name="delete_task_title">Delete task?</string>
+    <string name="delete_task_message">This can\'t be undone.</string>
+    <string name="delete_repeating_message">This deletes the repeating task and all of its history. This can\'t be undone.</string>
+    <string name="dark_mode">Dark mode</string>
 </resources>

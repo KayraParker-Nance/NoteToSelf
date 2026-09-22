@@ -7,6 +7,8 @@ import androidx.room.PrimaryKey;
 
 import java.time.LocalDateTime;
 
+import kpn.projects.notetoself.enums.ReminderUnit;
+
 @Entity(
         tableName = "notification_configs",
         foreignKeys = @ForeignKey(
@@ -22,7 +24,9 @@ public class NotificationConfig {
     public long taskId;
     public boolean enabled;
     public LocalDateTime showAfterDate;
-    public int repeatIntervalHours;
+    public int repeatInterval;
+    @NonNull
+    public ReminderUnit repeatUnit = ReminderUnit.HOUR;
     public boolean stickyEnabled;
     public LocalDateTime snoozedUntil;
     public LocalDateTime lastNotifiedAt;

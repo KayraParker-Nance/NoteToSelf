@@ -17,7 +17,13 @@ public class NotificationItem {
         this.color = color;
     }
 
-    public int notificationId() {
+    public static int notificationIdFor(long taskId) {
         return (int) (2000 + taskId);
     }
+
+    public int notificationId() {
+        return notificationIdFor(taskId);
+    }
+
+
 }

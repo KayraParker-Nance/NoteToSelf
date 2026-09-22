@@ -8,6 +8,7 @@ import androidx.work.impl.utils.ForceStopRunnable;
 
 import kpn.projects.notetoself.AppDatabase;
 import kpn.projects.notetoself.tasks.NotificationConfig;
+import kpn.projects.notetoself.tasks.OccurrenceGenerator;
 import kpn.projects.notetoself.tasks.Task;
 import android.content.BroadcastReceiver;
 
@@ -40,7 +41,7 @@ public class NotificationActionReceiver extends BroadcastReceiver {
 
                 if (ACTION_COMPLETE.equals(action)) {
                     if (occurrenceId != -1L) {
-                        db.taskOccurrenceDao().markCompleted(occurrenceId, LocalDateTime.now());
+                        OccurrenceGenerator.completeOccurrence(db, occurrenceId);
                     } else if (taskId != -1L) {
                         Task task = db.taskDao().getByIdSync(taskId);
                         if (task != null) {
@@ -54,10 +55,12 @@ public class NotificationActionReceiver extends BroadcastReceiver {
                 } else if (ACTION_SNOOZE.equals(action)) {
                     NotificationConfig config = db.notificationConfigDao().getForTaskSync(taskId);
                     if (config != null) {
-                        int hours = config.repeatIntervalHours > 0 ? config.repeatIntervalHours : DEFAULT_SNOOZE_HOURS;
-                        LocalDateTime snoozedUntil = LocalDateTime.now().plusHours(hours);
+                        LocalDateTime now = LocalDateTime.now();
+                        LocalDateTime snoozedUntil = config.repeatInterval > 0
+                                ? config.repeatUnit.addTo(now, config.repeatInterval)
+                                : now.plusHours(DEFAULT_SNOOZE_HOURS);
                         config.snoozedUntil = snoozedUntil;
-                        db.notificationConfigDao().insert(config); // REPLACE strategy handles the update
+                        db.notificationConfigDao().insert(config);
 
                         long triggerAt = snoozedUntil.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
                         NotificationAlarmScheduler.scheduleSnoozeCheck(appContext, triggerAt);

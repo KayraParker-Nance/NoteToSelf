@@ -8,6 +8,7 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -96,6 +97,13 @@ public class TaskSectionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         } else {
             ((TaskViewHolder) holder).bind(((TaskRow) row).task);
         }
+    }
+
+    @Nullable
+    public Task getTaskAt(int position) {
+        if (position < 0 || position >= rows.size()) return null;
+        Row row = rows.get(position);
+        return row instanceof TaskRow ? ((TaskRow) row).task : null;
     }
 
     class TaskViewHolder extends RecyclerView.ViewHolder {

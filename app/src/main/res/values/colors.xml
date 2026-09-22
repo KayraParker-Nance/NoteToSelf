@@ -12,6 +12,7 @@
     <color name="nts_on_accent_container">#3A1B2A</color>
     <color name="nts_outline">#E8D5DC</color>
     <color name="nts_due_soon">#D32F2F</color>
+    <color name="nts_swipe_complete">#43A047</color>
 
     <color name="task_pink">#F8C8DC</color>
     <color name="task_peach">#FFD8B5</color>

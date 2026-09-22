@@ -6,6 +6,7 @@ import android.app.NotificationManager;
 
 import kpn.projects.notetoself.debug.DebugSeeder;
 import kpn.projects.notetoself.notifications.NotificationAlarmScheduler;
+import kpn.projects.notetoself.utils.ThemeManager;
 
 public class NoteToSelfApp extends Application {
     public static final String STICKY_CHANNEL_ID = "sticky_tasks";
@@ -14,7 +15,10 @@ public class NoteToSelfApp extends Application {
     public void onCreate() {
         super.onCreate();
 
+        ThemeManager.applySavedTheme(this);
+
         createNotificationChannel();
+        TaskScheduler.scheduleDailyGeneration(this);
         NotificationAlarmScheduler.ensureScheduled(this);
 
         if (BuildConfig.DEBUG) {

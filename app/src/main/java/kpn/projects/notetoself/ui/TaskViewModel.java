@@ -70,8 +70,8 @@ public class TaskViewModel extends AndroidViewModel {
     public void completeSimpleTask(long taskId, Runnable onComplete) {
         repository.completeSimpleTask(taskId, onComplete);
     }
-    public void completeOccurrence(long occurrenceId) {
-        repository.completeOccurrence(occurrenceId);
+    public void completeOccurrence(long occurrenceId, Runnable onComplete) {
+        repository.completeOccurrence(occurrenceId, onComplete);
     }
 
     public void updateNotificationConfig(NotificationConfig config, Runnable onComplete) {
@@ -84,5 +84,9 @@ public class TaskViewModel extends AndroidViewModel {
 
     public LiveData<Task> getTask(long taskId) {
         return repository.getTask(taskId);
+    }
+
+    public void deleteTaskById(long taskId, Runnable onComplete) {
+        repository.deleteTaskById(taskId, onComplete);
     }
 }

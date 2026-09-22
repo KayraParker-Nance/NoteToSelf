@@ -27,7 +27,7 @@ import kpn.projects.notetoself.utils.Converters;
                 TaskOccurrence.class,
                 Class.class
         },
-        version = 5
+        version = 6
 )
 @TypeConverters({Converters.class})
 public abstract class AppDatabase extends RoomDatabase {
@@ -59,6 +59,24 @@ public abstract class AppDatabase extends RoomDatabase {
         }
     };
 
+    static final Migration MIGRATION_5_6 = new Migration(5, 6) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            database.execSQL("CREATE TABLE IF NOT EXISTS `notification_configs_new` (" +
+                    "`taskId` INTEGER NOT NULL, `enabled` INTEGER NOT NULL, `showAfterDate` TEXT, " +
+                    "`repeatInterval` INTEGER NOT NULL, `repeatUnit` TEXT NOT NULL, " +
+                    "`stickyEnabled` INTEGER NOT NULL, `snoozedUntil` TEXT, `lastNotifiedAt` TEXT, " +
+                    "PRIMARY KEY(`taskId`), " +
+                    "FOREIGN KEY(`taskId`) REFERENCES `tasks`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )");
+            database.execSQL("INSERT INTO notification_configs_new " +
+                    "(taskId, enabled, showAfterDate, repeatInterval, repeatUnit, stickyEnabled, snoozedUntil, lastNotifiedAt) " +
+                    "SELECT taskId, enabled, showAfterDate, repeatIntervalHours, 'HOUR', stickyEnabled, snoozedUntil, lastNotifiedAt " +
+                    "FROM notification_configs");
+            database.execSQL("DROP TABLE notification_configs");
+            database.execSQL("ALTER TABLE notification_configs_new RENAME TO notification_configs");
+        }
+    };
+
     public static AppDatabase getInstance(Context context) {
         if (instance == null) {
             synchronized (AppDatabase.class) {
@@ -67,7 +85,7 @@ public abstract class AppDatabase extends RoomDatabase {
                                     context.getApplicationContext(),
                                     AppDatabase.class,
                                     "notetoself_db"
-                            ).addMigrations(MIGRATION_3_4, MIGRATION_4_5)
+                            ).addMigrations(MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)
                             .fallbackToDestructiveMigration()
                             .build();
                 }

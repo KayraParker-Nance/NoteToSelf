@@ -92,19 +92,27 @@ public class NotificationRefreshReceiver extends BroadcastReceiver {
             int id = (int) (2000 + task.id);
 
             if (item == null) {
-                manager.cancel(id); // nothing to show anymore (completed, no due occurrence, etc.)
+                manager.cancel(id); // nothing to show anymore
+                if (config.lastNotifiedAt != null) {
+                    config.lastNotifiedAt = null; // so the next occurrence isn't held back by the old interval
+                    db.notificationConfigDao().insert(config);
+                }
                 continue;
             }
 
             boolean isShowing = shownIds.contains(id);
-            boolean dueForRenewal = config.repeatIntervalHours > 0
-                    && config.lastNotifiedAt != null
-                    && !now.isBefore(config.lastNotifiedAt.plusHours(config.repeatIntervalHours));
+            boolean shouldPost;
+            if (config.repeatInterval > 0) {
+                shouldPost = config.lastNotifiedAt == null
+                        || !now.isBefore(config.repeatUnit.addTo(config.lastNotifiedAt, config.repeatInterval));
+            } else {
+                shouldPost = !isShowing;
+            }
 
-            if (!isShowing || dueForRenewal) {
+            if (shouldPost) {
                 post(context, item);
                 config.lastNotifiedAt = now;
-                db.notificationConfigDao().insert(config); // REPLACE strategy handles the upsert
+                db.notificationConfigDao().insert(config);
             }
         }
     }

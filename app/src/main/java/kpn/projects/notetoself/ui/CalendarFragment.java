@@ -1,5 +1,6 @@
 package kpn.projects.notetoself.ui;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -138,6 +139,8 @@ public class CalendarFragment extends Fragment implements CalendarDayAdapter.Lis
 
     @Override
     public void onOccurrenceCompleted(long occurrenceId) {
-        viewModel.completeOccurrence(occurrenceId);
+        Context appContext = requireContext().getApplicationContext();
+        viewModel.completeOccurrence(occurrenceId,
+                () -> NotificationRefreshReceiver.triggerImmediateRefresh(appContext));
     }
 }

@@ -22,8 +22,10 @@ public class TaskRepository {
     private final NotificationConfigDao notificationConfigDao;
     private final ExecutorService executor;
 
+    private final AppDatabase db;
+
     private TaskRepository(Context context) {
-        AppDatabase db = AppDatabase.getInstance(context);
+        this.db = AppDatabase.getInstance(context);
         this.taskDao = db.taskDao();
         this.occurrenceDao = db.taskOccurrenceDao();
         this.notificationConfigDao = db.notificationConfigDao();
@@ -53,7 +55,7 @@ public class TaskRepository {
 
     public LiveData<List<Task>> getUpcomingDueDateTasks() {
         LocalDate today = LocalDate.now();
-        return taskDao.getDueDateTasksInRange(today, today.plusDays(7));
+        return taskDao.getActiveDueDateTasksInRange(today, today.plusDays(7));
     }
 
     public LiveData<List<TaskOccurrence>> getPendingOccurrencesForDay(LocalDate day) {
@@ -112,9 +114,11 @@ public class TaskRepository {
         });
     }
 
-    public void completeOccurrence(long occurrenceId) {
-        executor.execute(() ->
-                occurrenceDao.markCompleted(occurrenceId, LocalDateTime.now()));
+    public void completeOccurrence(long occurrenceId, Runnable onComplete) {
+        executor.execute(() -> {
+            OccurrenceGenerator.completeOccurrence(db, occurrenceId);
+            if (onComplete != null) onComplete.run();
+        });
     }
 
     public void updateNotificationConfig(NotificationConfig config, Runnable onComplete) {
@@ -147,6 +151,14 @@ public class TaskRepository {
                 task.completed = completed;
                 taskDao.updateTask(task);
             }
+        });
+    }
+
+    public void deleteTaskById(long taskId, Runnable onComplete) {
+        executor.execute(() -> {
+            Task task = taskDao.getByIdSync(taskId);
+            if (task != null) taskDao.deleteTask(task);
+            if (onComplete != null) onComplete.run();
         });
     }
 }

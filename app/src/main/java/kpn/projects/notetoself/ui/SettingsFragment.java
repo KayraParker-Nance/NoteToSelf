@@ -15,8 +15,11 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.switchmaterial.SwitchMaterial;
+
 import kpn.projects.notetoself.R;
 import kpn.projects.notetoself.backups.BackupManager;
+import kpn.projects.notetoself.utils.ThemeManager;
 
 public class SettingsFragment extends Fragment {
 
@@ -68,5 +71,10 @@ public class SettingsFragment extends Fragment {
 
         btnBackup.setOnClickListener(v -> createBackupLauncher.launch("notetoself_backup.json"));
         btnRestore.setOnClickListener(v -> restoreBackupLauncher.launch(new String[]{"application/json"}));
+
+        SwitchMaterial switchDarkMode = view.findViewById(R.id.switchDarkMode);
+        switchDarkMode.setChecked(ThemeManager.isDarkActive(requireContext()));
+        switchDarkMode.setOnCheckedChangeListener((buttonView, isChecked) ->
+                ThemeManager.setDarkMode(requireContext(), isChecked));
     }
 }
