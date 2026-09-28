@@ -12,6 +12,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import kotlinx.coroutines.flow.Flow;
+import kpn.projects.notetoself.enums.ReminderUnit;
+import kpn.projects.notetoself.enums.TaskColour;
+import kpn.projects.notetoself.enums.TaskType;
 
 @Dao
 public interface TaskDao {
@@ -60,4 +63,22 @@ public interface TaskDao {
     @Query("SELECT * FROM tasks WHERE type = 'DUE_DATE' AND completed = 0 " +
             "AND date(dueDate) BETWEEN date(:start) AND date(:end) ORDER BY dueDate ASC")
     LiveData<List<Task>> getActiveDueDateTasksInRange(LocalDate start, LocalDate end);
+
+    class TaskTemplate {
+        public String title;
+        public TaskType type;
+        public TaskColour color;
+        public boolean hasConfig;
+        public boolean stickyEnabled;
+        public int repeatInterval;
+        public ReminderUnit repeatUnit;
+    }
+    @Query("SELECT t.title AS title, t.type AS type, t.color AS color, " +
+            "c.taskId IS NOT NULL AS hasConfig, c.stickyEnabled AS stickyEnabled, " +
+            "c.repeatInterval AS repeatInterval, c.repeatUnit AS repeatUnit " +
+            "FROM tasks t LEFT JOIN notification_configs c ON c.taskId = t.id " +
+            "WHERE t.id IN (SELECT MAX(id) FROM tasks GROUP BY LOWER(title)) " +
+            "AND t.title LIKE :prefix || '%' ESCAPE '\\' " +
+            "ORDER BY t.title COLLATE NOCASE LIMIT 5")
+    List<TaskTemplate> findTemplates(String prefix);
 }

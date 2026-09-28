@@ -161,4 +161,9 @@ public class TaskRepository {
             if (onComplete != null) onComplete.run();
         });
     }
+
+    public List<TaskDao.TaskTemplate> findTemplates(String prefix) {
+        String escaped = prefix.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_");
+        return taskDao.findTemplates(escaped);
+    }
 }

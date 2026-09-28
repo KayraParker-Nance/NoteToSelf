@@ -11,6 +11,7 @@ import java.util.List;
 
 import kpn.projects.notetoself.tasks.NotificationConfig;
 import kpn.projects.notetoself.tasks.Task;
+import kpn.projects.notetoself.tasks.TaskDao;
 import kpn.projects.notetoself.tasks.TaskOccurrence;
 import kpn.projects.notetoself.tasks.TaskOccurrenceDao;
 import kpn.projects.notetoself.tasks.TaskRepository;
@@ -88,5 +89,9 @@ public class TaskViewModel extends AndroidViewModel {
 
     public void deleteTaskById(long taskId, Runnable onComplete) {
         repository.deleteTaskById(taskId, onComplete);
+    }
+
+    public List<TaskDao.TaskTemplate> findTemplates(String prefix) {
+        return repository.findTemplates(prefix);
     }
 }

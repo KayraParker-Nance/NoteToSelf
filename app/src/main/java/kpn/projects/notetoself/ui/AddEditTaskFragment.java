@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -30,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import kpn.projects.notetoself.R;
+import kpn.projects.notetoself.adapters.TaskSuggestionAdapter;
 import kpn.projects.notetoself.enums.ReminderUnit;
 import kpn.projects.notetoself.enums.TaskColour;
 import kpn.projects.notetoself.notifications.NotificationRefreshReceiver;
@@ -38,6 +40,7 @@ import kpn.projects.notetoself.enums.RecurrenceUnit;
 import kpn.projects.notetoself.enums.ScheduleMode;
 import kpn.projects.notetoself.tasks.Task;
 import kpn.projects.notetoself.enums.TaskType;
+import kpn.projects.notetoself.tasks.TaskDao;
 
 public class AddEditTaskFragment extends Fragment {
 
@@ -49,26 +52,14 @@ public class AddEditTaskFragment extends Fragment {
     private boolean isEditMode;
     private boolean fieldsPopulated = false;
     private Task existingTask;
-
-    private EditText inputTitle;
-    private EditText inputDescription;
-    private RadioGroup radioGroupType;
-    private View groupDueDate;
-    private View groupRegular;
-    private TextView textDueDateValue;
-    private Button buttonPickDueDate;
-    private EditText inputInterval;
-    private Spinner spinnerRecurrenceUnit;
-    private RadioGroup radioGroupScheduleMode;
-    private Button buttonPickStartDate;
-    private TextView textStartDateValue;
+    private EditText inputDescription, inputInterval, inputRepeatInterval;
+    private AutoCompleteTextView inputTitle;
+    private RadioGroup radioGroupType, radioGroupScheduleMode;
+    private View groupDueDate, groupRegular;
+    private TextView textDueDateValue, textStartDateValue, textShowAfterValue;
+    private Button buttonPickDueDate, buttonPickStartDate, buttonPickShowAfter, buttonSave, buttonDelete;
+    private Spinner spinnerRecurrenceUnit, spinnerRepeatUnit;
     private SwitchMaterial switchSticky;
-    private Button buttonPickShowAfter;
-    private TextView textShowAfterValue;
-    private EditText inputRepeatHours;
-    private Button buttonSave;
-    private Button buttonDelete;
-
     private LocalDate selectedDueDate;
     private LocalDate selectedStartDate = LocalDate.now();
     private LocalDate selectedShowAfterDate;
@@ -76,8 +67,6 @@ public class AddEditTaskFragment extends Fragment {
     private LinearLayout layoutColorSwatches;
     private TaskColour selectedColor = TaskColour.NONE;
     private final List<View> colorSwatchViews = new ArrayList<>();
-    private EditText inputRepeatInterval;
-    private Spinner spinnerRepeatUnit;
 
     @Nullable
     @Override
@@ -100,6 +89,7 @@ public class AddEditTaskFragment extends Fragment {
         setupSpinner();
         setupDatePickers();
         setupColorPicker();
+        if (!isEditMode) setupTitleSuggestions();
         setupSaveAndDelete();
 
         if (isEditMode) {
@@ -387,6 +377,23 @@ public class AddEditTaskFragment extends Fragment {
             swatch.setScaleX(isSelected ? 1.2f : 1f);
             swatch.setScaleY(isSelected ? 1.2f : 1f);
             swatch.setAlpha(isSelected ? 1f : 0.7f);
+        }
+    }
+
+    private void setupTitleSuggestions() {
+        inputTitle.setAdapter(new TaskSuggestionAdapter(requireContext(), viewModel::findTemplates));
+        inputTitle.setOnItemClickListener((parent, v, pos, id) ->
+                applyTemplate((TaskDao.TaskTemplate) parent.getItemAtPosition(pos)));
+    }
+
+    private void applyTemplate(TaskDao.TaskTemplate t) {
+        selectedColor = t.color != null ? t.color : TaskColour.NONE;
+        updateSwatchSelectionUi();
+
+        if (t.hasConfig) {
+            switchSticky.setChecked(t.stickyEnabled);
+            inputRepeatInterval.setText(t.repeatInterval > 0 ? String.valueOf(t.repeatInterval) : "");
+            if (t.repeatUnit != null) spinnerRepeatUnit.setSelection(t.repeatUnit.ordinal());
         }
     }
 }
