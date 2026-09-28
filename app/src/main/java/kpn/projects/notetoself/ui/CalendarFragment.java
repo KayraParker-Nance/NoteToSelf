@@ -12,7 +12,9 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -69,6 +71,7 @@ public class CalendarFragment extends Fragment implements CalendarDayAdapter.Lis
         recyclerDays.setLayoutManager(new GridLayoutManager(requireContext(), 7));
         recyclerDays.setNestedScrollingEnabled(false);
         recyclerDays.setAdapter(dayAdapter);
+        setupMonthSwipe(recyclerDays);
 
         taskAdapter = new CalendarTaskAdapter(this);
         RecyclerView recyclerTasks = view.findViewById(R.id.recycler_day_tasks);
@@ -142,5 +145,41 @@ public class CalendarFragment extends Fragment implements CalendarDayAdapter.Lis
         Context appContext = requireContext().getApplicationContext();
         viewModel.completeOccurrence(occurrenceId,
                 () -> NotificationRefreshReceiver.triggerImmediateRefresh(appContext));
+    }
+
+    private void setupMonthSwipe(RecyclerView recyclerDays) {
+        final int swipeThreshold = 100;
+        final int swipeVelocityThreshold = 100;
+
+        GestureDetector gestureDetector = new GestureDetector(requireContext(),
+                new GestureDetector.SimpleOnGestureListener() {
+                    @Override
+                    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+                        if (e1 == null) return false;
+
+                        float diffX = e2.getX() - e1.getX();
+                        float diffY = e2.getY() - e1.getY();
+
+                        if (Math.abs(diffX) > Math.abs(diffY)
+                                && Math.abs(diffX) > swipeThreshold
+                                && Math.abs(velocityX) > swipeVelocityThreshold) {
+                            if (diffX > 0) {
+                                viewModel.goToPreviousMonth();
+                            } else {
+                                viewModel.goToNextMonth();
+                            }
+                            return true;
+                        }
+                        return false;
+                    }
+                });
+
+        recyclerDays.addOnItemTouchListener(new RecyclerView.SimpleOnItemTouchListener() {
+            @Override
+            public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
+                gestureDetector.onTouchEvent(e);
+                return false;
+            }
+        });
     }
 }
