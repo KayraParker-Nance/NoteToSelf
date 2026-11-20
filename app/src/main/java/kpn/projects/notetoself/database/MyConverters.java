@@ -9,7 +9,7 @@ import java.time.LocalTime;
 
 import kpn.projects.notetoself.enums.TaskColour;
 
-public class TypeConverters {
+public class MyConverters {
 
     //Convert from string to date time
     @TypeConverter
