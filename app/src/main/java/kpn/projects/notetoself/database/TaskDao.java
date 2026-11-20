@@ -27,7 +27,7 @@ public interface TaskDao {
     @Query("SELECT * FROM tasks")
     public List<Task> getAllTasksSync();
     @Query("SELECT * FROM tasks WHERE id = :id")
-    LiveData<Task> getById(long id);
+    public LiveData<Task> getById(long id);
     @Query("SELECT * FROM tasks WHERE id = :id")
     public Task getByIdSync(long id);
     @Query("SELECT * FROM tasks WHERE type = 'TODO' AND completed = 0")
@@ -41,5 +41,5 @@ public interface TaskDao {
     @Query("SELECT * FROM tasks WHERE type = 'REGULAR'")
     public List<Task> getAllRegularTasksSync();
     @Query("SELECT COUNT(*) FROM tasks")
-    int countTasksSync();
+    public int countTasksSync();
 }

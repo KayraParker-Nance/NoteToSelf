@@ -18,7 +18,7 @@ public interface ScheduleItemDao {
     @Delete
     public void delete(ScheduleItem scheduleItem);
     @Query("SELECT * FROM classes ORDER BY dayOfWeek ASC, startTime ASC")
-    LiveData<List<ScheduleItem>> getAll();
+    public LiveData<List<ScheduleItem>> getAll();
     @Query("SELECT * FROM classes WHERE id = :id")
-    LiveData<ScheduleItem> getById(long id);
+    public LiveData<ScheduleItem> getById(long id);
 }
